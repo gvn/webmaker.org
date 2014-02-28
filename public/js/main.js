@@ -41,6 +41,7 @@ requirejs.config({
 
 require([
   'jquery',
+  'base/events-embed',
   'base/cta',
   'base/marquee',
   'base/email-signup',
@@ -50,7 +51,7 @@ require([
   'base/webmaker-campaign',
   'base/login',
   'tabzilla',
-], function ($, cta, Marquee, privacy, AnchorSlide, WebmakerUI, navigation, webmakerCampaign) {
+], function ($, eventsEmbed, cta, Marquee, privacy, AnchorSlide, WebmakerUI, navigation, webmakerCampaign) {
   'use strict';
 
   var $window = $(window);
@@ -65,6 +66,11 @@ require([
       $backToTop.removeClass('addMore');
     }
   });
+
+  // Embed events app if the iframe is present
+  if ($('iframe#events-embed').length) {
+    eventsEmbed.init();
+  }
 
   // Attach navigation UI
   navigation();
