@@ -13,8 +13,7 @@
   <title>{% block title %}{% endblock %} - {{ gettext("Mozilla Webmaker") }}</title>
   {% block css %}{% endblock %}
   <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/bower/nav-global/nav.css">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.{{ localeInfo.direction }}.css">
 
   <!--[if lte IE 9]><link rel="stylesheet" href="/css/warning.css"><![endif]-->
 
@@ -22,13 +21,7 @@
   <script src="{{ personaHostname }}/include.js"></script>
   <script src="https://cdn.optimizely.com/js/206878104.js"></script>
   <!-- For JS error tracking purposes -->
-  <script type="text/javascript">
-    (function() {
-      window.onerror = function (message, url, linenumber) {
-        window.jsErrorDetected = true;
-      }
-    })();
-  </script>
+  <script src="js/lib/error-track.js" async></script>
 </head>
 
 <body id="{{ page }}" {% if view %}class="{{ view }}"{% endif %} data-endpoint="{{ makeEndpoint }}">
@@ -76,7 +69,7 @@
             </li>
             <li>
               <div class="webmaker-login persona-button" style="display: none;">
-                <span class="text">{{ gettext("Sign in") }}</span><span class="tip"></span>
+                <span dir="{{localeInfo.direction}}" class="text">{{ gettext("Sign in") }}</span><span dir="{{localeInfo.direction}}" class="tip"></span>
               </div>
               <span class="webmaker-logout" style="display: none;">{{ gettext("Sign out") }}</span>
             </li>
@@ -140,13 +133,6 @@
         <div class="footerHr"></div>
 
         <ul class="social">
-          <li>
-            <select id="lang-picker" data-supported="{{supportedLanguages}}">
-            {% for language in listDropdownLang %}
-              <option {% if languageNameFor(localeInfo.lang) == languageNameFor(language) %} selected="selected" {% endif %} value="{{language}}">{{ languageNameFor(language) }}</option>
-            {% endfor %}
-            </select>
-          </li>
           <li><a href="//twitter.com/mozilla"><i class="footer-social icon-twitter"></i> @mozilla</a></li>
           <li><a href="//twitter.com/webmaker"><i class="footer-social icon-twitter"></i> @webmaker</a></li>
           <li><a href="//plus.google.com/u/2/communities/106022863174952221205"><i class="footer-social icon-google-plus"></i> google+</a></li>
@@ -170,8 +156,10 @@
             </div>
           </li>
         </ul>
-
         <ul class="links">
+          <li>
+            {% include "webmaker-language-picker/template/partial.html" %}
+          </li>
           <li><a href="http://blog.webmaker.org">{{ gettext("Blog") }}</a></li>
           <li><a href="/{{localeInfo.lang}}/about">{{ gettext("About Us") }}</a></li>
           <li><a href="/{{localeInfo.lang}}/getinvolved">{{ gettext("Get Involved") }}</a></li>

@@ -202,18 +202,20 @@ app.locals({
   loginAPI: env.get("LOGIN"),
   ga_account: env.get("GA_ACCOUNT"),
   ga_domain: env.get("GA_DOMAIN"),
-  supportedLanguages: i18n.getLanguages(),
-  listDropdownLang: i18n.getSupportLanguages(),
+  languages: i18n.getSupportLanguages(),
   PROFILE_URL: env.get("PROFILE_URL"),
   flags: env.get("FLAGS") || {},
   personaHostname: env.get("PERSONA_HOSTNAME", "https://login.persona.org")
 });
 
 app.use(function (req, res, next) {
+  var user = req.session.user;
   res.locals({
-    email: req.session.email || '',
-    username: req.session.username || '',
-    makerID: req.session.id || '',
+    currentPath: req.path,
+    returnPath: req.param('page'),
+    email: user ? user.email : '',
+    username: user ? user.username : '',
+    makerID: user ? user.id : '',
     csrf: req.csrfToken(),
     navigation: navigation,
     gettext: req.gettext,
@@ -225,8 +227,9 @@ app.use(function (req, res, next) {
 require("./lib/events").init(app, nunjucksEnv, __dirname);
 
 var optimize = NODE_ENV !== "development",
-  tmpDir = path.join(require("os").tmpDir(), "mozilla.webmaker.org");
-app.use(lessMiddleWare({
+  tmpDir = path.join(require("os").tmpDir(), "mozilla.webmaker.org"),
+  rtltrForLess = require("rtltr-for-less");
+app.use(lessMiddleWare(rtltrForLess({
   once: optimize,
   debug: !optimize,
   dest: tmpDir,
@@ -235,7 +238,7 @@ app.use(lessMiddleWare({
   yuicompress: optimize,
   optimization: optimize ? 0 : 2,
   sourceMap: !optimize
-}));
+})));
 app.use(express.static(tmpDir));
 
 // Nunjucks
@@ -360,12 +363,8 @@ app.get("/u/:user", routes.usersearch);
 
 app.get("/terms", routes.page("terms"));
 app.get("/privacy", routes.page("privacy"));
+app.get("/languages", routes.page("languages"));
 
-app.get("/sso/include.js", routes.includejs(env.get("HOSTNAME")));
-app.get("/sso/include.html", middleware.removeXFrameOptions, routes.include());
-app.get("/sso/include-transparent.html", middleware.removeXFrameOptions, routes.include({
-  transparent: "transparent"
-}));
 app.get("/sitemap.xml", function (req, res) {
   res.type("xml");
   res.render("sitemap.xml");

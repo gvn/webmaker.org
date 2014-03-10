@@ -3,11 +3,13 @@ requirejs.config({
   paths: {
     'jquery': '../bower/jquery/jquery',
     'social': '../js/lib/socialmedia',
-    'localized': '../bower/webmaker-i18n/localized'
+    'localized': '../bower/webmaker-i18n/localized',
+    'eventEmitter': '../bower/eventEmitter',
+    'webmaker-auth-client': '../bower/webmaker-auth-client',
   }
 });
-define(['jquery', 'social', 'localized'],
-  function ($, SocialMedia, localized) {
+define(['jquery', 'social', 'localized', 'webmaker-auth-client/webmaker-auth-client'],
+  function ($, SocialMedia, localized, WebmakerAuth) {
     localized.ready(function () {
       var social,
         $body = $("body"),
@@ -25,7 +27,12 @@ define(['jquery', 'social', 'localized'],
         googleBtn = document.getElementById("google-btn"),
         twitterBtn = document.getElementById("twitter-btn"),
         fbBtn = document.getElementById("fb-btn"),
-        url = $body.data("url");
+        url = $body.data("url"),
+        csrfToken = $("meta[name='csrf-token']").attr("content"),
+        webmakerAuth = new WebmakerAuth({
+          csrfToken: csrfToken,
+          handleNewUserUI: false
+        });
 
       var socialMessage = localized.get('DetailsShareTwitterMsg');
       social = new SocialMedia({
@@ -42,8 +49,22 @@ define(['jquery', 'social', 'localized'],
         $shareBtn.off("click", shareOnClick);
       }
 
-      function openLogInWindow() {
-        window.open("/login", "Log In");
+      $shareBtn.on("click", shareOnClick);
+
+      function openLogInWindow(actionCallback) {
+        function onLogin() {
+          webmakerAuth.off("login", onLogin);
+          webmakerAuth.off("error", onError);
+          actionCallback();
+        }
+
+        function onError() {
+          webmakerAuth.off("login", onLogin);
+          webmakerAuth.off("error", onError);
+        }
+        webmakerAuth.on("login", onLogin);
+        webmakerAuth.on("error", onError);
+        webmakerAuth.login();
       }
 
       function displayTooltip($tooltipElem, delay) {
@@ -67,19 +88,9 @@ define(['jquery', 'social', 'localized'],
         window.addEventListener("click", clickCallback, false);
       }
 
-      $likeNotLoggedInMsg.on("click", openLogInWindow);
-      $reportNotLoggedInMsg.on("click", openLogInWindow);
+      // Like event handlers
 
-      $shareBtn.on("click", shareOnClick);
-      $shareBtn.on("click", shareOnClick);
-
-      $likeBtn.on("click", function (e) {
-        if (e.target !== $likeBtn[0]) {
-          return;
-        }
-
-        e.preventDefault();
-
+      function likeRequest() {
         var makeID = $likeBtn.data("make-id"),
           method;
 
@@ -91,32 +102,49 @@ define(['jquery', 'social', 'localized'],
 
         $.post(method, {
           makeID: makeID,
-          _csrf: $("meta[name='csrf-token']").attr("content")
+          _csrf: csrfToken
         }, function (res) {
-          var newLen = res.likes.length;
-          $likeBtn.toggleClass("icon-heart icon-heart-empty");
-          $likeCount.html(newLen);
-          if (newLen === 0) {
-            $likeText.html(localized.get("Like-0"));
-          } else if (newLen === 1) {
-            $likeText.html(localized.get("Like-1"));
-          } else {
-            $likeText.html(localized.get("Like-n"));
-          }
+          updateLikes(res.likes.length);
+
         }).fail(function (res) {
           if (res.status === 401) {
             displayTooltip($likeNotLoggedInMsg, 5000);
+          } else if (res.status === 400) {
+            // user already likes/unliked
+            updateLikes();
           }
         });
-      });
+      }
 
-      $reportButton.on("click", function (e) {
-        if (e.target !== $reportButton[0]) {
+      function updateLikes(newLen) {
+        $likeBtn.toggleClass("icon-heart icon-heart-empty");
+        if (typeof newLen === "undefined") {
+          return;
+        } else if (newLen === 0) {
+          $likeText.html(localized.get("Like-0"));
+        } else if (newLen === 1) {
+          $likeText.html(localized.get("Like-1"));
+        } else {
+          $likeText.html(localized.get("Like-n"));
+        }
+        $likeCount.html(newLen);
+      }
+
+      $likeBtn.on("click", function (e) {
+        if (e.target !== $likeBtn[0]) {
           return;
         }
-
         e.preventDefault();
+        likeRequest();
+      });
 
+      $likeNotLoggedInMsg.on("click", function () {
+        openLogInWindow(likeRequest);
+      });
+
+      // Report Event Handlers
+
+      function reportRequest() {
         var makeID = $reportButton.data("make-id"),
           method;
 
@@ -128,20 +156,41 @@ define(['jquery', 'social', 'localized'],
 
         $.post(method, {
           makeID: makeID,
-          _csrf: $("meta[name='csrf-token']").attr("content")
+          _csrf: csrfToken
         }, function (res) {
-          $reportButton.toggleClass("icon-flag icon-flag-alt");
-          $reportedText.toggleClass("hide");
-          if (method === "/report") {
-            displayTooltip($makeReportedMsg, 10000);
-          }
+          updateReport(method);
         }).fail(function (res) {
           if (res.status === 401) {
             displayTooltip($reportNotLoggedInMsg, 5000);
+          } else if (res.status === 400) {
+            // already reported/cancelled
+            updateReport(method);
           } else {
             displayTooltip($reportError, 5000);
           }
         });
+      }
+
+      function updateReport(method) {
+        $reportButton.toggleClass("icon-flag icon-flag-alt");
+        $reportedText.toggleClass("hide");
+        if (method === "/report") {
+          displayTooltip($makeReportedMsg, 10000);
+        }
+      }
+
+      $reportButton.on("click", function (e) {
+        if (e.target !== $reportButton[0]) {
+          return;
+        }
+        e.preventDefault();
+        reportRequest();
       });
+
+      $reportNotLoggedInMsg.on("click", function () {
+        openLogInWindow(reportRequest);
+      });
+
+      webmakerAuth.verify();
     });
   });
