@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery', 'analytics'], function ($, analytics) {
   var Carousel = function (target) {
     var self = this;
 
@@ -29,6 +29,9 @@ define(['jquery'], function ($) {
       var storyId = this.getAttribute('data-id');
 
       self.changeStory(storyId);
+      analytics.event("Click Homepage Carousel", {
+        label: "Toggle Index"
+      });
     });
 
     self.$nextButton.on('click', function () {
@@ -36,6 +39,9 @@ define(['jquery'], function ($) {
       var storyId = self.getStoryByNumber(currentIndex + 1);
 
       self.changeStory(storyId);
+      analytics.event("Click Homepage Carousel", {
+        label: "Next"
+      });
     });
 
     self.$backButton.on('click', function () {
@@ -43,6 +49,9 @@ define(['jquery'], function ($) {
       var storyId = self.getStoryByNumber(currentIndex - 1);
 
       self.changeStory(storyId);
+      analytics.event("Click Homepage Carousel", {
+        label: "Back"
+      });
     });
   };
 
@@ -52,7 +61,7 @@ define(['jquery'], function ($) {
     var $posterImg = $('img', $posterWrapper);
 
     function showStory() {
-      $('#poster-' + storyId).addClass('active');
+      $posterWrapper.css('background-image', 'url(' + $posterImg.data('src') + ')').addClass('active');
       self.imageLoading = false;
     }
 

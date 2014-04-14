@@ -2,43 +2,49 @@
 
 angular
   .module('exploreApp')
-  .controller('navigationController', function ($scope, $location, $routeParams, Slug, SITE) {
-    $scope.isCollapsed = true;
-    $scope.skills = SITE.skills;
+  .controller('mainController', ['$scope',
+    function ($scope) {
+      // Home
+    }
+  ])
+  .controller('navigationController', ['$scope', '$location', '$routeParams', 'weblit',
+    function ($scope, $location, $routeParams, weblit) {
+      $scope.isCollapsed = true;
 
-    $scope.isActive = function (name) {
-      if (name[0] === '/') {
-        return name === $location.path();
-      }
-      return Slug.slugify(name) === $routeParams.id;
-    };
+      $scope.isActive = function (tag) {
+        if (tag[0] === '/') {
+          return tag === $location.path();
+        }
+        return tag === $routeParams.id;
+      };
 
-    $scope.isUnselected = function () {
-      return window.location.hash === '#/';
-    };
-  })
-  .controller('mainController', function ($scope) {
-    //
-  })
-  .controller('competencyController', function ($scope, $location, $routeParams, Slug, makeapi, SITE) {
+      $scope.isUnselected = function () {
+        return window.location.hash === '#/';
+      };
+    }
+  ])
+  .controller('competencyController', ['$rootScope', '$scope', '$location', '$routeParams', 'weblit', 'makeapi', 'SITE', 'CONFIG',
+    function ($rootScope, $scope, $location, $routeParams, weblit, makeapi, SITE, CONFIG) {
 
-    $scope.slug = $routeParams.id;
+    $scope.tag = $routeParams.id;
 
-    $scope.skill = SITE.skills.filter(function (item) {
-      return Slug.slugify(item.name) === $scope.slug;
+    $scope.skill = weblit.all().filter(function (item) {
+      return item.tag === $scope.tag;
     })[0];
 
-    $scope.kits = SITE.kits[$scope.slug];
+    $scope.kits = $rootScope.kits[$scope.tag];
 
     $scope.mentors = SITE.mentors;
 
+    $scope.wlcPoints = CONFIG.wlcPoints;
+
     makeapi
-      .tags($scope.skill.tags)
+      .tags($scope.skill.tag)
       .then(function(data) {
         $scope.makes = data;
       });
 
-  })
-  .controller('addController', function ($scope) {
+  }])
+  .controller('addController', ['$scope', function ($scope) {
     //blah
-  });
+  }]);

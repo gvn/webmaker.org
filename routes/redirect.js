@@ -49,9 +49,10 @@ module.exports = function (app) {
       "/connect"
     ]
   }, {
-    route: "/event-guides",
+    route: app.locals.EVENTS_URL + '/#!/event-guides',
     paths: [
-      "/guides"
+      "/guides",
+      "/event-guides"
     ]
   }, {
     route: "https://support.mozilla.org/kb/translate-webmaker",
@@ -63,6 +64,16 @@ module.exports = function (app) {
     paths: [
       "/events",
       "/events/*"
+    ]
+  }, {
+    route: "/mentor",
+    paths: [
+      "/community"
+    ]
+  }, {
+    route: "/resources",
+    paths: [
+      "/starter-makes"
     ]
   }];
 

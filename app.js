@@ -83,7 +83,8 @@ if (!(env.get("MAKE_ENDPOINT") && env.get("MAKE_PRIVATEKEY") && env.get("MAKE_PU
 
 // Initialize make client so it is available to other modules
 require("./lib/makeapi")({
-  apiURL: env.get("MAKE_ENDPOINT"),
+  readOnlyURL: env.get("MAKE_ENDPOINT_READONLY") || env.get("MAKE_ENDPOINT"),
+  authenticatedURL: env.get("MAKE_ENDPOINT"),
   hawk: {
     key: env.get("MAKE_PRIVATEKEY"),
     id: env.get("MAKE_PUBLICKEY"),
@@ -207,9 +208,22 @@ app.use(i18n.middleware({
 
 // Adding an external JSON file to our existing one for the specified locale
 var authLocaleJSON = require("./bower_components/webmaker-auth-client/locale/en_US/create-user-form.json");
+var weblitLocaleJSON = require("./node_modules/web-literacy-client/dist/weblitmap.json");
+
 i18n.addLocaleObject({
   "en-US": authLocaleJSON
-}, function (result) {});
+}, function (err, res) {
+  if (err) {
+    console.error(err);
+  }
+});
+i18n.addLocaleObject({
+  "en-US": weblitLocaleJSON
+}, function (err, res) {
+  if (err) {
+    console.error(err);
+  }
+});
 
 app.use(express.json());
 app.use(express.urlencoded());
@@ -236,6 +250,7 @@ app.locals({
 app.use(function (req, res, next) {
   var user = req.session.user;
   res.locals({
+    wlcPoints: require("./lib/web-literacy-points.json"),
     currentPath: req.path,
     returnPath: req.param('page'),
     email: user ? user.email : '',
@@ -317,7 +332,7 @@ app.get("/teach", routes.gallery({
   layout: "teach",
   prefix: "teach"
 }));
-app.get("/starter-makes", routes.gallery({
+app.get("/resources", routes.gallery({
   layout: "starterMakes",
   prefix: "template",
   limit: 20
@@ -350,7 +365,8 @@ var literacyRedirect = function (req, res) {
 app.get("/standard", literacyRedirect);
 app.get("/standard/*", literacyRedirect);
 
-app.get("/literacy", routes.page("literacy"));
+app.get("/literacy", routes.literacy);
+
 app.get("/literacy/exploring", routes.page("literacy-exploring"));
 app.get("/literacy/building", routes.page("literacy-building"));
 app.get("/literacy/connecting", routes.page("literacy-connecting"));
@@ -398,6 +414,7 @@ app.get('/angular-config.js', function (req, res) {
   angularConfig.defaultLang = 'en-US';
   angularConfig.supported_languages = i18n.getSupportLanguages();
   angularConfig.csrf = req.csrfToken();
+  angularConfig.wlcPoints = res.locals.wlcPoints;
 
   res.setHeader('Content-type', 'text/javascript');
   res.send('window.angularConfig = ' + JSON.stringify(angularConfig));

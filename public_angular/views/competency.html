@@ -1,6 +1,6 @@
-<div class="jumbotron" style="background: {{skill.colour}}">
+<div class="jumbotron" style="background: {{ skill.color }}">
   <div class="container">
-    <h1>{{ skill.name }}</h1>
+    <h1>{{ skill.term }}</h1>
     <p>{{ skill.description }}</p>
   </div>
 </div>
@@ -9,69 +9,32 @@
 
   <div class="container">
 
-    <h2 class="page-header">{{ 'Kits' | i18n }}</h2>
+    <h2 class="page-header">{{ 'Skills' | i18n }}</h2>
+    <ul class="list list-web-literacy-points">
+      <li ng-repeat="point in wlcPoints[skill.tag]">{{point | i18n }}</li>
+    </ul>
+
+    <h2 class="page-header">{{ 'Featured Teaching Resources' | i18n }}</h2>
 
     <div ng-hide="kits.length" class="well well-create-kit text-center">
       <button class="btn btn-default btn-create-kit"><span class="fa fa-plus"></span></button>
       <p class="text-muted" ng-bind-html="'noStaffPick' | i18n"></p>
     </div>
 
-    <tabset>
-      <tab ng-if="kits.length" heading="{{ 'Staff picks' | i18n }}">
-        <div class="row">
-          <a target="_blank" href="{{kit.url}}" ng-repeat="kit in kits" class="thumbnail thumbnail-horizontal row">
-            <div class="icon">
-              <span class="fa fa-sitemap"></span>
-            </div>
-            <div class="col-xs-10">
-              <div class="caption">
-                <h3>{{kit.title}}</h3>
-                <p class="text-muted">
-                  <span class="badge"
-                    ng-repeat="tag in kit.tags">
-                    #{{tag | decodeURI}}
-                  </span>
-                </p>
-                <p class="text-muted">{{kit.description}}</p>
-                <p ng-show="kit.likes.length" class="text-primary">
-                  <span class="fa fa-check"></span> {{kit.likes.length}}
-                  <span ng-show="kit.likes.length === 1">{{ 'Endorsement' | i18n }}</span>
-                  <span ng-show="kit.likes.length > 1">{{ 'Endorsements' | i18n }}</span>
-                </p>
-              </div>
-            </div>
-          </a>
-        </div>
-      </tab>
-      <tab heading="{{ 'Most endorsed' | i18n }}">
-        <a target="_blank" href="{{kit.url}}" ng-repeat="kit in makes" class="thumbnail thumbnail-horizontal row">
-          <div class="icon">
-            <span class="fa fa-sitemap"></span>
-          </div>
-          <div class="col-xs-10">
-            <div class="caption">
-              <h3>{{kit.title}}</h3>
-              <p class="text-muted">
-                <span class="badge"
-                  ng-repeat="tag in kit.tags">
-                  #{{tag | decodeURI}}
-                </span>
-              </p>
-              <p class="text-muted">{{kit.description}}</p>
-              <p ng-show="kit.likes.length" class="text-primary">
-                <span class="fa fa-check"></span> {{kit.likes.length}}
-                <span ng-show="kit.likes.length === 1">{{ 'Endorsement' | i18n }}</span>
-                <span ng-show="kit.likes.length > 1">{{ 'Endorsements' | i18n }}</span>
-              </p>
-            </div>
+    <div class="row">
+      <div ng-repeat="kit in kits" class="col-md-6 col-lg-4">
+        <a target="_blank" class="thumbnail thumbnail-staff-pick" href="{{kit.url}}">
+          <div class="caption">
+            <h3>{{ kit.title }}</h3>
+            <p class="text-muted">{{ 'By' | i18n }} {{ kit.author }}</p>
           </div>
         </a>
-      </tab>
-     </tabset>
+      </div>
+    </div>
 
-     <p><button class="pull-right btn btn-primary">
-         <span class="fa fa-plus"></span> {{ 'Add a kit' | i18n }}
-       </button></p>
+    <p>
+      <a href="/{{lang}}/search?type=tags&q={{skill.tag}}" class="pull-right btn btn-default">{{ 'More Resources' | i18n }}</a>
+    </p>
 
   </div>
 
@@ -91,7 +54,7 @@
           </ex-avatar>
 
           <p>{{mentor.name}}<br>
-          <span class="text-muted">{{mentor.title}}</span></p>
+          <span class="text-muted">{{ mentor.title | i18n }}</span></p>
         </div>
 
         <div class="col-xs-4 col-sm-3">

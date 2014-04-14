@@ -2,6 +2,12 @@
 @makerstrap-bower-path: "../../bower_components";
 
 /*********************************************************
+* Sections
+*/
+@import 'variables';
+@import 'kits';
+
+/*********************************************************
 * To be merged in makerstrap
 */
 
@@ -112,6 +118,9 @@
 
 }
 
+.page-header {
+  border-bottom: none;
+}
 
 /*********************************************************
 * Resets
@@ -152,38 +161,6 @@ img {
     }
   }
 }
-
-// Gallery
-@thumbnail-border: #DDD;
-
-.thumbnail {
-  .badge {
-    font-weight: normal;
-    background: @brand-primary;
-    margin-right: 3px;
-    opacity: 0.5;
-    cursor: pointer;
-    &:hover {
-      opacity: 1;
-    }
-  }
-}
-.thumbnail-horizontal {
-  @media screen and (min-width: @screen-xs) {
-    padding: @grid-gutter-width;
-  }
-  .icon {
-    float: left;
-    color: #DDD;
-    font-size: 20px;
-    margin-top: 10px;
-    @media screen and (min-width: @screen-xs) {
-      font-size: 60px;
-      margin-top: 0;
-    }
-  }
-}
-
 
 /*********************************************************
 * Base
@@ -355,6 +332,11 @@ img {
   margin: 30px 0;
 }
 
+// The skills for each competency
+.list-web-literacy-points {
+  line-height: 1.8;
+}
+
 // Tabs
 .tab-pane .row {
   margin-top: @grid-gutter-width;
@@ -378,12 +360,22 @@ img {
     z-index: 1;
 
     &.laurel-left {
-      left: 0;
+      html[dir="ltr"] & {
+        left: 0;
+      }
+      html[dir="rtl"] & {
+        right: 0;
+      }
       -webkit-transform: rotate(90deg);
       -webkit-transform-origin: 100% 50%;
     }
     &.laurel-right {
-      right: 0;
+      html[dir="ltr"] & {
+        right: 0;
+      }
+      html[dir="rtl"] & {
+        left: 0;
+      }
       -webkit-transform: rotate(-90deg);
       -webkit-transform-origin: 0 50%;
     }
@@ -409,11 +401,21 @@ img {
       -webkit-transform: rotate(0);
       opacity: 1;
     }
-    .laurel-left {
-      left: -15px;
+    html[dir="ltr"] & {
+      .laurel-left {
+        left: -15px;
+      }
+      .laurel-right {
+        right: -15px;
+      }
     }
-    .laurel-right {
-      right: -15px;
+    html[dir="rtl"] & {
+      .laurel-left {
+        right: -15px;
+      }
+      .laurel-right {
+        left: -15px;
+      }
     }
     .img-mentor-avatar {
       -webkit-transform: scale(1);

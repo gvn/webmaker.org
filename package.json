@@ -1,10 +1,10 @@
 {
   "name": "webmaker.org",
-  "version": "1.0.63",
+  "version": "1.0.70",
   "private": true,
   "scripts": {
     "test": "grunt validate",
-    "postinstall": "bower install",
+    "postinstall": "bower install && grunt build",
     "download-locales": "webmaker-download-locales webmaker"
   },
   "repository": {
@@ -22,7 +22,7 @@
     "hood": "0.2.1",
     "knox": "0.8.x",
     "less-middleware": "https://github.com/Pomax/less.js-middleware/archive/master.tar.gz",
-    "makeapi-client": "https://github.com/mozilla/makeapi-client/tarball/v0.5.17",
+    "makeapi-client": "0.5.21",
     "mapquest": "0.0.1",
     "markdown": "0.4.x",
     "messina": "0.1.1",
@@ -41,16 +41,22 @@
     "webmaker-locale-mapping": "latest",
     "webmaker-i18n": "0.3.15",
     "webmaker-loginapi": "https://github.com/mozilla/node-webmaker-loginapi/tarball/v0.1.18",
+    "web-literacy-client": "1.1.1",
     "webmaker-postalservice": "https://github.com/mozilla/node-webmaker-postalservice/tarball/v0.2.6"
   },
   "devDependencies": {
     "colors": "0.6.2",
     "bower": "1.2.7",
     "grunt": "0.4.2",
+    "grunt-cli": "0.1.13",
     "grunt-contrib-jshint": "0.7.1",
     "grunt-gettext-finder": "0.0.2",
     "grunt-jsbeautifier": "0.2.2",
     "grunt-contrib-imagemin": "0.3.0",
-    "grunt-shell": "0.6.1"
+    "grunt-shell": "0.6.1",
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.4.13"
   }
 }

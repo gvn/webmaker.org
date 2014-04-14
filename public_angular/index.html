@@ -6,15 +6,14 @@
     <title ng-bind-html="'Explore' | i18n"></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, user-scalable=no">
-
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700' rel='stylesheet' type='text/css'>
     <!-- We have to do this to make sure we display the page when localization has been loaded. -->
     <style>
       html, body {
         display: none;
       }
     </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
     <!-- Note: this file is rendered with Less middleware can be found at /less/explore/main.less -->
     <link rel="stylesheet" ng-href="/css/explore/main.{{direction}}.css">
 </head>
@@ -60,7 +59,7 @@
           <div class="navbar-collapse" collapse="isCollapsed">
             <ul class="nav navbar-nav">
               <li class="active nav-icon"><a href="#!"><span class="fa fa-random"></span> {{ 'Explore' | i18n }}</a></li>
-              <li class="nav-icon" ><a href="/starter-makes"><span class="fa fa-hand-o-up"></span> {{ 'Make' | i18n }}</a></li>
+              <li class="nav-icon" ><a href="/resources"><span class="fa fa-hand-o-up"></span> {{ 'Make' | i18n }}</a></li>
               <li class="nav-icon"><a href="/teach"><span class="fa fa-book"></span> {{ 'Teach' | i18n }}</a></li>
               <li class="nav-icon"><a href="/events"><span class="fa fa-map-marker"></span> {{ 'Events' | i18n }}</a></li>
               <li class="nav-icon"><a href="/about"><span class="fa fa-info"></span> {{ 'Info' | i18n }}</a></li>
@@ -79,10 +78,10 @@
             <a href="#/">{{ 'Web Literacy Map' | i18n }}</a>
           </li>
           <li
-            ng-repeat="skill in skills"
-            ng-class="{ active : isActive(skill.name) }"
-            style="background-color: {{ skill.colour }}">
-            <a href="#/competencies/{{ skill.name | slugify }}">{{ skill.name }}</a>
+            ng-repeat="skill in literacies"
+            ng-class="{ active : isActive(skill.tag) }"
+            style="background-color: {{ skill.color }}">
+            <a href="#/competencies/{{ skill.tag }}">{{ skill.term }}</a>
           </li>
           <li
             ng-class="{ active : isActive('/add') }"
@@ -99,25 +98,8 @@
 
   <script src="../angular-config.js"></script>
   <script src="https://login.persona.org/include.js"></script>
-  <script src="/bower_components/jquery/jquery.js"></script>
-  <script src="/bower_components/makeapi-client/src/make-api.js"></script>
-  <script src="/bower_components/webmaker-auth-client/dist/webmaker-auth-client.min.js"></script>
-  <script src="/bower_components/masonry/dist/masonry.pkgd.js"></script>
-
-  <script src="/bower_components/angular/angular.js"></script>
-  <script src="/bower_components/angular-resource/angular-resource.js"></script>
-  <script src="/bower_components/angular-route/angular-route.js"></script>
-  <script src="/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-  <script src="/bower_components/angular-slugify/angular-slugify.js"></script>
-  <script src="/bower_components/angular-bootstrap/ui-bootstrap.js"></script>
-  <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-
-  <script src="js/app.js"></script>
-  <script src="js/controllers.js"></script>
-  <script src="js/directives.js"></script>
-  <script src="js/services.js"></script>
-  <script src="js/webmaker-login.js"></script>
-  <script src="js/i18n.js"></script>
+  <script src="compiled/dependencies.min.js"></script>
+  <script src="compiled/app.min.js"></script>
 
 </body>
 </html>

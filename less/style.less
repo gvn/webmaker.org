@@ -266,6 +266,14 @@ img {
   }
 }
 
+.make-search {
+  .tags-on-hover {
+    display: none;
+  }
+  &:hover .tags-on-hover {
+    display: block;
+  }
+}
 .make-search .btn-container {
   .fork-btn {
     background: @lightgrey;
@@ -304,6 +312,7 @@ img {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: @white;
 }
 
 .template-banner {
@@ -515,6 +524,9 @@ img {
 
 
 .tag-container {
+  .icon-tags {
+    color: #CCC;
+  }
   font-size: 0.9em;
   margin: 0.5em 0 0 0;
 }
