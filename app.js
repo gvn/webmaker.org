@@ -343,7 +343,10 @@ app.get("/privacy-makes", routes.gallery({
   limit: 20
 }));
 
-app.get("/party", routes.page("party"));
+app.get("/party", function (req, res) {
+  res.redirect(301, 'http://party.webmaker.org');
+});
+
 app.get("/tools", routes.page("tools"));
 app.get("/teach-templates", routes.page("teach-templates"));
 app.get("/mentor", routes.page("mentor"));
